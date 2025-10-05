@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Register</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="title">DRAGON DUEL</div>
+<div class="frame">
+  <div class="line"></div>
+  <div class="content">
+    <img src="images/banner.png" style="margin-top:10px;">
+    <h4>Daftar Akun Baru</h4>
+
+    <!-- urutan input: Nama Tampilan, Email, Password -->
+    <input id="username" type="text" placeholder="Nama Pengguna"><br>
+    <input id="email" type="email" placeholder="Email"><br>
+    <input id="password" type="password" placeholder="Kata Sandi"><br>
+
+    <button onclick="register()">DAFTAR</button>
+
+    <!-- teks footer sesuai permintaan -->
+    <p>Sudah punya akun? <a href="login.html">MASUK</a></p>
+    <p><a href="forgot.html">Lupa Kata Sandi?</a></p>
+  </div>
+  <div class="line"></div>
+</div>
+
+<div class="copyright">© Ultima 2025</div>
+
+<!-- Firebase compat -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+  apiKey: "AIzaSyClKd3G2Zl_UNSvR9opoxSjPLpCEamWHrU",
+  authDomain: "dragon-duel-5f471.firebaseapp.com",
+  projectId: "dragon-duel-5f471",
+  storageBucket: "dragon-duel-5f471.firebasestorage.app",
+  messagingSenderId: "813696646151",
+  appId: "1:813696646151:web:33c5493e7d24f3b1bffea2",
+  measurementId: "G-TGHQ8679FX"
+};
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // jika sudah login, pindah ke index
+  auth.onAuthStateChanged(function(user){
+    if(user){ window.location.href="index.html"; }
+  });
+
+  function register(){
+    const name = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const pass = document.getElementById("password").value;
+
+    auth.createUserWithEmailAndPassword(email, pass)
+      .then(userCredential=>{
+        return userCredential.user.updateProfile({ displayName: name });
+      })
+      .then(()=>{
+        window.location.href="index.html";
+      })
+      .catch(err=> alert("Register gagal: " + err.message));
+  }
+</script>
+</body>
+</html>

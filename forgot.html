@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Lupa Kata Sandi</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="title">DRAGON DUEL</div>
+<div class="frame">
+  <div class="line"></div>
+  <div class="content">
+    <img src="images/banner.png" style="margin-top:10px;">
+    <h4>Reset Kata Sandi</h4>
+
+    <input id="resetEmail" type="email" placeholder="Masukkan Email Anda"><br>
+    <button onclick="resetPassword()">Kirim</button>
+
+    <p><a href="login.html">Kembali ke Login</a></p>
+  </div>
+  <div class="line"></div>
+</div>
+
+<div class="copyright">© Ultima 2025</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+  apiKey: "AIzaSyClKd3G2Zl_UNSvR9opoxSjPLpCEamWHrU",
+  authDomain: "dragon-duel-5f471.firebaseapp.com",
+  projectId: "dragon-duel-5f471",
+  storageBucket: "dragon-duel-5f471.firebasestorage.app",
+  messagingSenderId: "813696646151",
+  appId: "1:813696646151:web:33c5493e7d24f3b1bffea2",
+  measurementId: "G-TGHQ8679FX"
+};
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  function resetPassword() {
+    const email = document.getElementById("resetEmail").value;
+    if (!email) {
+      alert("Masukkan email terlebih dahulu!");
+      return;
+    }
+
+    auth.sendPasswordResetEmail(email)
+      .then(() => {
+        alert("Link reset sudah dikirim ke email: " + email);
+      })
+      .catch(err => {
+        alert("Gagal mengirim link reset: " + err.message);
+      });
+  }
+</script>
+</body>
+</html>

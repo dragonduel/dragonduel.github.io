@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Index</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body style="display:none;">
+  <div class="title">DRAGON DUEL</div>
+  <div class="frame">
+    <div class="line"></div>
+    <div class="content">
+      <h1>Selamat Datang di Index</h1>
+      <p id="userInfo"></p>
+      <button onclick="logout()">Logout</button>
+    </div>
+    <div class="line"></div>
+  </div>
+  <div class="copyright">© Ultima 2025</div>
+
+  <!-- Firebase compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyClKd3G2Zl_UNSvR9opoxSjPLpCEamWHrU",
+      authDomain: "dragon-duel-5f471.firebaseapp.com",
+      projectId: "dragon-duel-5f471",
+      storageBucket: "dragon-duel-5f471.firebasestorage.app",
+      messagingSenderId: "813696646151",
+      appId: "1:813696646151:web:33c5493e7d24f3b1bffea2",
+      measurementId: "G-TGHQ8679FX"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        // user tidak login → redirect tanpa menampilkan isi
+        window.location.href = "login.html";
+      } else {
+        // user login → baru tampilkan body
+        document.body.style.display = "block";
+        document.getElementById("userInfo").textContent =
+          "Login sebagai: " + (user.displayName || user.email);
+      }
+    });
+
+    function logout() {
+      auth.signOut().then(() => window.location.href = "login.html");
+    }
+  </script>
+</body>
+</html>
