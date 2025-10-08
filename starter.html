@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Pilih Naga Starter</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  body {
+    text-align: center;
+  }
+</style>
+</head>
+
+<body>
+<div class="title">DRAGON DUEL</div>
+<div class="frame">
+  <div class="content">
+    <h4>Pilih naga starter anda!</h4>
+
+    <table style="margin:auto;">
+      <tr>
+        <td>
+          <b>Ignarion</b><br>
+          <img src="images/ignarion1.png"><br>
+          <a href="#" onclick="chooseDragon('Ignarion'); return false;">Pilih</a>
+        </td>
+        <td>
+          <b>Nymarion</b><br>
+          <img src="images/nymarion1.png"><br>
+          <a href="#" onclick="chooseDragon('Nymarion'); return false;">Pilih</a>
+        </td>
+        <td>
+          <b>Zepharion</b><br>
+          <img src="images/zepharion1.png"><br>
+          <a href="#" onclick="chooseDragon('Zepharion'); return false;">Pilih</a>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="line"></div>
+</div>
+<div class="copyright">© Ultima 2025</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // --- Konfigurasi Firebase ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyClKd3G2Zl_UNSvR9opoxSjPLpCEamWHrU",
+    authDomain: "dragon-duel-5f471.firebaseapp.com",
+    projectId: "dragon-duel-5f471",
+    storageBucket: "dragon-duel-5f471.firebasestorage.app",
+    messagingSenderId: "813696646151",
+    appId: "1:813696646151:web:33c5493e7d24f3b1bffea2",
+    measurementId: "G-TGHQ8679FX"
+  };
+
+  // --- Inisialisasi Firebase & Firestore ---
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // --- Sembunyikan halaman sampai login terverifikasi ---
+  document.body.style.display = "none";
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      localStorage.setItem("userUID", user.uid);
+      document.body.style.display = "block";
+    } else {
+      localStorage.removeItem("userUID");
+      window.location.replace("login.html");
+    }
+  });
+
+  // --- FUNGSI SIMPAN PILIHAN NAGA ---
+  function chooseDragon(name) {
+    const uid = localStorage.getItem("userUID");
+    if (!uid) {
+      alert("Anda belum login!");
+      return window.location.replace("login.html");
+    }
+
+    // Simpan ke localStorage
+    localStorage.setItem("starterDragon", name);
+    localStorage.setItem("starterChosen", "true");
+
+    // Simpan juga ke Firestore
+    db.collection("players").doc(uid).set({
+      starter: name,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true })
+    .then(() => {
+      console.log("Pilihan starter disimpan ke Firestore!");
+      window.location.replace("index.html");
+    })
+    .catch(err => {
+      alert("Gagal menyimpan ke Firestore: " + err.message);
+    });
+  }
+</script>
+</body>
+</html>

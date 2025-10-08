@@ -2,55 +2,161 @@
 <html lang="id">
 <head>
   <meta charset="utf-8">
-  <title>Index</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dragon Duel</title>
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      color: #000;
+      text-align: center;
+      display: none;
+    }
+
+  </style>
 </head>
-<body style="display:none;">
-  <div class="title">DRAGON DUEL</div>
-  <div class="frame">
-    <div class="line"></div>
-    <div class="content">
-      <h1>Selamat Datang di Index</h1>
-      <p id="userInfo"></p>
-      <button onclick="logout()">Logout</button>
-    </div>
-    <div class="line"></div>
+<body>
+  <div class="topbar" id="playerStats">
+    Level: 1 &nbsp; Exp: 0 &nbsp; Energi: 10/10 &nbsp; Emas: 0 &nbsp; Berlian: 0
   </div>
+  <div class="nav">
+    <a href="#">Home</a>
+    <a href="#">Berburu</a>
+    <a href="#">Duel</a>
+    <a href="#">Item</a>
+    <a href="#">Toko</a>
+    <a href="#">Sarang Naga</a>
+    <a href="#">Pesan (0)</a>
+    <a href="#">Chat</a>
+    <a href="#">Teman</a>
+    <a href="#">News (0)</a>
+    <a href="#">Peringkat</a>
+  </div>
+  <div class="space"></div>
+  <div class="frame">
+    <table>
+  <tr>
+    <td style="width:40%;text-align:center;">
+      <span id="dragonName"><b>Ignarion</b></span>
+    </td>
+    <td>
+      <div class="lvl-exp">
+        <span class="left">Level: <span id="dragonLevel">1</span></span>
+        <span class="right">Exp: <span id="dragonExp">0/20</span></span>
+      </div>
+    </td>
+  </tr>
+  <tr>
+  <td class="dragon-cell" rowspan="4">
+    <div class="dragon-bg">
+      <img id="dragonImg" src="images/ignarion1.png" alt="Naga">
+    </div>
+  </td>
+    <td class="stat">HP: <span id="hp">20/20</span></td>
+</tr>
+      <tr>
+    <td class="stat">Atk: <span id="atk">9</span></td>
+  </tr>
+  <tr>
+    <td class="stat">Def: <span id="def">6</span></td>
+  </tr>
+  <tr>
+    <td class="stat">Spd: <span id="spd">7</span></td>
+  </tr>
+</table>
+  </div>
+  <div class="frame" style="padding:5px;text-align:left;">
+    <b id="playerName">Player</b><br>
+    <b>Level:</b> <span id="playerLevel">1</span><br>
+    <b>Exp:</b> <span id="playerExp">0</span>/<span id="playerMaxExp">20</span><br>
+    <b>Menang:</b> <span id="wins">0</span><br>
+    <b>Kalah:</b> <span id="losses">0</span><br>
+  </div>
+  
+  <div class="footer-links">
+    <a href="#">Pengaturan</a>
+    <a href="#">Online(12)</a>
+    <a href="login.html" id="logoutBtn">Log Out</a>
+
+  </div>
+<div class="line"></div>
   <div class="copyright">© Ultima 2025</div>
 
-  <!-- Firebase compat -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyClKd3G2Zl_UNSvR9opoxSjPLpCEamWHrU",
-      authDomain: "dragon-duel-5f471.firebaseapp.com",
-      projectId: "dragon-duel-5f471",
-      storageBucket: "dragon-duel-5f471.firebasestorage.app",
-      messagingSenderId: "813696646151",
-      appId: "1:813696646151:web:33c5493e7d24f3b1bffea2",
-      measurementId: "G-TGHQ8679FX"
-    };
+  // --- FIREBASE CONFIG ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyClKd3G2Zl_UNSvR9opoxSjPLpCEamWHrU",
+    authDomain: "dragon-duel-5f471.firebaseapp.com",
+    projectId: "dragon-duel-5f471",
+    storageBucket: "dragon-duel-5f471.firebasestorage.app",
+    messagingSenderId: "813696646151",
+    appId: "1:813696646151:web:33c5493e7d24f3b1bffea2",
+    measurementId: "G-TGHQ8679FX"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        // user tidak login → redirect tanpa menampilkan isi
-        window.location.href = "login.html";
-      } else {
-        // user login → baru tampilkan body
-        document.body.style.display = "block";
-        document.getElementById("userInfo").textContent =
-          "Login sebagai: " + (user.displayName || user.email);
+  // --- CEK LOGIN ---
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      // belum login → ke login.html
+      window.location.replace("login.html");
+    } else {
+      // sudah login, baru cek starter
+      if (!localStorage.getItem("starterChosen")) {
+        window.location.replace("starter.html");
+        return;
       }
-    });
 
-    function logout() {
-      auth.signOut().then(() => window.location.href = "login.html");
+      // tampilkan halaman
+      document.body.style.display = "block";
+
+      // tampilkan info user
+      document.getElementById("playerName").textContent = user.displayName || user.email;
+
+      // tampilkan naga starter
+      const dragon = localStorage.getItem("starterDragon") || "Ignarion";
+      const stats = {
+        "Ignarion": { hp: 20, atk: 9, def: 6, spd: 7, lvl: 5, exp: "100/200", img: "images/ignarion1.png" },
+        "Nymarion": { hp: 20, atk: 7, def: 8, spd: 6, lvl: 5, exp: "100/200", img: "images/nymarion1.png" },
+        "Zepharion": { hp: 20, atk: 8, def: 5, spd: 9, lvl: 5, exp: "100/200", img: "images/zepharion1.png" }
+      };
+      const d = stats[dragon];
+      document.getElementById("dragonName").textContent = dragon;
+      document.getElementById("dragonImg").src = d.img;
+      document.getElementById("dragonLvlExp").textContent = "Lvl: " + d.lvl + " | Exp: " + d.exp;
+      document.getElementById("atk").textContent = d.atk;
+      document.getElementById("def").textContent = d.def;
+      document.getElementById("spd").textContent = d.spd;
+
+      // info pemain dasar (sementara statik)
+      document.getElementById("playerStats").innerHTML =
+        `Level: 1 &nbsp; Exp: 200 &nbsp; Gold: 1000 &nbsp; Credit: 5 &nbsp; Energy: 10/10`;
     }
+  });
+  
+  // --- FUNGSI LOGOUT ---
+  document.addEventListener("DOMContentLoaded", () => {
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        auth.signOut().then(() => {
+          // bersihkan data lokal jika perlu
+          localStorage.removeItem("starterChosen");
+          localStorage.removeItem("starterDragon");
+          window.location.replace("login.html");
+        }).catch(err => {
+          alert("Gagal logout: " + err.message);
+        });
+      });
+    }
+  });
   </script>
 </body>
 </html>

@@ -9,49 +9,80 @@
 
 <div class="title">DRAGON DUEL</div>
 <div class="frame">
-  <div class="line"></div>
   <div class="content">
-  <img src="images/banner.png"/ style="margin-top:10px;">
-  <h4>Silahkan Masuk</h4>
+  <img src="images/banner.png"/>
+    <h4>Silahkan Masuk</h4>
     <input id="email" type="email" placeholder="Email"><br>
     <input id="password" type="password" placeholder="Kata Sandi"><br>
-    <button onclick="login()">MASUK</button>
-    <p>Belum punya akun? <a href="register.html">DAFTAR</a></p>
-    <p><a href="forgot.html">Lupa Kata Sandi?</a></p>
+    <a href="index.html" onclick="login(); return false;">MASUK</a>
+    <br>Belum punya akun? <a href="register.html">DAFTAR</a>
+    <br><a href="forgot.html">Lupa Kata Sandi?</a>
   </div>
-  <div class="line"></div>
 </div>
-
 <div class="copyright">© Ultima 2025</div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <script>
-  var firebaseConfig = {
-  apiKey: "AIzaSyClKd3G2Zl_UNSvR9opoxSjPLpCEamWHrU",
-  authDomain: "dragon-duel-5f471.firebaseapp.com",
-  projectId: "dragon-duel-5f471",
-  storageBucket: "dragon-duel-5f471.firebasestorage.app",
-  messagingSenderId: "813696646151",
-  appId: "1:813696646151:web:33c5493e7d24f3b1bffea2",
-  measurementId: "G-TGHQ8679FX"
-};
+  // --- Firebase Config ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyClKd3G2Zl_UNSvR9opoxSjPLpCEamWHrU",
+    authDomain: "dragon-duel-5f471.firebaseapp.com",
+    projectId: "dragon-duel-5f471",
+    storageBucket: "dragon-duel-5f471.firebasestorage.app",
+    messagingSenderId: "813696646151",
+    appId: "1:813696646151:web:33c5493e7d24f3b1bffea2",
+    measurementId: "G-TGHQ8679FX"
+  };
   firebase.initializeApp(firebaseConfig);
-  var auth = firebase.auth();
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  auth.onAuthStateChanged(function(user){
-    if(user){ window.location.href="index.html"; }
-  });
+  // --- FUNGSI LOGIN ---
+  function login() {
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("password").value.trim();
 
-  function login(){
-    var email=document.getElementById("email").value;
-    var pass=document.getElementById("password").value;
     auth.signInWithEmailAndPassword(email, pass)
-      .then(function(){ window.location.href="index.html"; })
-      .catch(function(err){ alert("Login gagal: " + err.message); });
+      .then(cred => {
+        const user = cred.user;
+        if (!user) throw new Error("User tidak ditemukan.");
+
+        // 🔹 Setelah login, cek Firestore apakah sudah punya naga
+        return db.collection("players").doc(user.uid).get().then(doc => {
+          if (doc.exists && doc.data().starter) {
+            localStorage.setItem("starterChosen", "true");
+            localStorage.setItem("starterDragon", doc.data().starter);
+            window.location.replace("index.html");
+          } else {
+            window.location.replace("starter.html");
+          }
+        });
+      })
+      .catch(err => {
+        alert("Login gagal: " + err.message);
+      });
   }
+
+  // --- CEK LOGIN OTOMATIS (sudah login sebelumnya) ---
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      db.collection("players").doc(user.uid).get().then(doc => {
+        if (doc.exists && doc.data().starter) {
+          localStorage.setItem("starterChosen", "true");
+          localStorage.setItem("starterDragon", doc.data().starter);
+          window.location.replace("index.html");
+        } else {
+          window.location.replace("starter.html");
+        }
+      }).catch(() => {
+        window.location.replace("starter.html");
+      });
+    }
+  });
 </script>
 
 </body>
-</html>
+</html> 
