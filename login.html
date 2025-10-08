@@ -14,7 +14,7 @@
     <h4>Silahkan Masuk</h4>
     <input id="email" type="email" placeholder="Email"><br>
     <input id="password" type="password" placeholder="Kata Sandi"><br>
-    <a href="index.html" onclick="login(); return false;">MASUK</a>
+    <button id="loginBtn">MASUK</button>
     <br>Belum punya akun? <a href="register.html">DAFTAR</a>
     <br><a href="forgot.html">Lupa Kata Sandi?</a>
   </div>
@@ -25,8 +25,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<script>
-  // --- Firebase Config ---
+
+  <script>
   const firebaseConfig = {
     apiKey: "AIzaSyClKd3G2Zl_UNSvR9opoxSjPLpCEamWHrU",
     authDomain: "dragon-duel-5f471.firebaseapp.com",
@@ -40,36 +40,26 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // --- FUNGSI LOGIN ---
-  function login() {
+  // Tombol login
+  document.getElementById("loginBtn").addEventListener("click", () => {
     const email = document.getElementById("email").value.trim();
     const pass = document.getElementById("password").value.trim();
 
+    if (!email || !pass) return alert("Isi email dan kata sandi!");
+
     auth.signInWithEmailAndPassword(email, pass)
-      .then(cred => {
-        const user = cred.user;
-        if (!user) throw new Error("User tidak ditemukan.");
-
-        // 🔹 Setelah login, cek Firestore apakah sudah punya naga
-        return db.collection("players").doc(user.uid).get().then(doc => {
-          if (doc.exists && doc.data().starter) {
-            localStorage.setItem("starterChosen", "true");
-            localStorage.setItem("starterDragon", doc.data().starter);
-            window.location.replace("index.html");
-          } else {
-            window.location.replace("starter.html");
-          }
-        });
+      .then(() => {
+        // Tunggu perubahan authState
+        console.log("Login berhasil, memeriksa starter...");
       })
-      .catch(err => {
-        alert("Login gagal: " + err.message);
-      });
-  }
+      .catch(err => alert("Login gagal: " + err.message));
+  });
 
-  // --- CEK LOGIN OTOMATIS (sudah login sebelumnya) ---
-  auth.onAuthStateChanged(user => {
+  // Otomatis arahkan setelah login
+  auth.onAuthStateChanged(async user => {
     if (user) {
-      db.collection("players").doc(user.uid).get().then(doc => {
+      try {
+        const doc = await db.collection("players").doc(user.uid).get();
         if (doc.exists && doc.data().starter) {
           localStorage.setItem("starterChosen", "true");
           localStorage.setItem("starterDragon", doc.data().starter);
@@ -77,9 +67,10 @@
         } else {
           window.location.replace("starter.html");
         }
-      }).catch(() => {
+      } catch (err) {
+        alert("Gagal memuat data pemain: " + err.message);
         window.location.replace("starter.html");
-      });
+      }
     }
   });
 </script>
