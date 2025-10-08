@@ -1,50 +1,59 @@
   body {
+    color: #bbb;
   margin:0;
   padding:0;
-  font-family: Arial, sans-serif;
-  background:#3b4db5;
+  background:#000;
   text-align:center;
   }
-  
   h4 {
   all: unset;
   display:block;
-  color:#9d0000;
+  color:fff;
   font-weight:bold;
-  margin-block-start: 10px;
-  margin-block-end: 10px;
   }
 
   .title {
     color:#fff;
-    font-size:;
     font-weight:bold;
-    margin:5px 0;
+    margin: 2px 0 2px 0;
   }
+
+  .topbar {
+      color: #bbb;
+      padding: 2px;
+      font-weight: bold;
+    }
+
+    .nav {
+      background: #000;
+      padding: 2px;
+    }
+
+    .nav a {
+      color: #fff;
+      margin: 0 3px;
+      text-decoration: none;
+      font-weight: bold;
+    }
 
   .frame { 
+    color: #bbb;
     margin:0 auto;
-    background:#fff;
-  }
-
-  .line {
-    height:2px;
-    background:#ff3ca0;
-  }
-
-  .content {
-    padding:;
+    background:#000;
   }
 
   input {
+    color: #bbb;
     width:30%;
     padding:5px;
     margin:5px 0;
-    border:1px solid #000;
+    border:1px solid #bbb;
+    background: #000;
   }
 
   button {
     background:#ff2355;
+    font-weight:bold;
     border-top:2px solid #ffa3b9;
     border-left:2px solid #ffa3b9;
     border-bottom: 2px solid #9d2241;
@@ -62,14 +71,93 @@
     border-right:2px solid #ffa3b9;
   }
   
+  h2 {
+    margin-top: 20px;
+  }
+  
+ table {
+    margin: 0 auto 0 5px;
+    border-collapse: collapse;
+  }
+  
+  td {
+  padding: 2px 4px;
+  vertical-align: top;
+}
+  img {
+    height: auto;
+  }
+  .choose {
+    background: #ff2355;
+    color: #fff;
+    padding: 6px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+  }
+  .choose:hover {
+    background: #c81b44;
+  }
+
+#dragonName {
+  color:#bbb;
+  font-weight: bold;
+  text-align: center;
+}
+
+.dragon-bg {
+  display: inline-block;
+  background: url('/storage/emulated/0/HTML Editor/images/tfield_bg.png') center/contain no-repeat;
+  width: 100px;
+  height: 100px;
+  border: 2px solid #fff;
+}
+
+#dragonImg {
+  width:100px
+}
+
+td.dragon-cell {
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+}
+
+.lvl-exp {
+  color: #bbb;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.stat {
+  text-align: left;
+  font-weight: bold;
+  vertical-align:middle;
+}
+
+#dragonLevel, #dragonExp, #hp, #atk, #def, #spd {
+  font-weight: normal;
+}
+
   a {
-    color:#1e9ff3;
+    color:#fff;
     text-decoration:none;
     font-weight:bold;
   }
+    .footer-links {
+      padding: 2px;
+    }
+
+    .footer-links a {
+      margin: 0 5px;
+    }
 
   .copyright {
-    color:#fff;
+    color:#bbb;
     font-weight:bold;
-    margin:5px 0;
+    margin:3px 0;
   }
